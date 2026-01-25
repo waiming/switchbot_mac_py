@@ -1,6 +1,6 @@
 # switchbot_mac_py
 
-A Python utility for controlling SwitchBot devices using [pySwitchbot](https://github.com/Danielhiversen/pySwitchbot) on macOS.
+A Python utility for controlling SwitchBot devices directly using [pySwitchbot](https://github.com/Danielhiversen/pySwitchbot) on macOS, without Switchbot hub.
 
 **Tested with:** SwitchBot firmware 6.6
 
