@@ -1,4 +1,10 @@
 import asyncio
+import sys
+from pathlib import Path
+
+# Add parent directory to path to import config module
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 from switchbot import Switchbot, GetSwitchbotDevices
 from config.config import mac, password
 
@@ -20,6 +26,19 @@ async def main():
     device_info = devices[mac]
     print(f"Found device: {device_info.data.get('modelFriendlyName', 'SwitchBot')}")
     
+
+    for mac_address, device_info in devices.items():
+        model = device_info.data.get('modelFriendlyName', 'Unknown')
+        battery = device_info.data.get('data', {}).get('battery', 'N/A')
+        rssi = device_info.rssi
+        print(f"Device: {model}")
+        print(f"  MAC Address: {mac_address}")
+        print(f"  Battery: {battery}%")
+        print(f"  Signal (RSSI): {rssi} dBm")
+        print()
+
+    await asyncio.sleep(5)
+
     # Create a bot instance
     bot = Switchbot(device=device_info.device, password=password)
     
