@@ -6,10 +6,16 @@ A Python utility for controlling SwitchBot devices directly using [pySwitchbot](
 
 ## Installation
 
-```bash
-python -m venv venv
-source venv/bin/activate && pip install pySwitchbot
-```
+1. Create and activate a virtual environment:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate
+   ```
+
+2. Install required packages:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
 ## Finding Your Device MAC Address
 
@@ -40,7 +46,9 @@ This will scan for nearby SwitchBot devices and display:
 
 ## Usage
 
-Once configured, you can control your SwitchBot device. For example, to press the button three times:
+### Manual Control
+
+To press the button three times:
 
 ```bash
 python src/pressing3times.py
@@ -50,6 +58,21 @@ This script will:
 1. Scan and connect to your configured SwitchBot device
 2. Display device information (model, battery, signal strength)
 3. Press the button three times with 5-second intervals between each press
+
+### Automated Scheduling
+
+To run the script automatically every 1 hour and 5 minutes:
+
+```bash
+python src/scheduler.py
+```
+
+The scheduler will:
+- Run `pressing3times.py` immediately on startup
+- Continue running it every 1 hour and 5 minutes
+- Show timestamped logs of each execution
+- Recover automatically if individual executions fail
+- Press Ctrl+C to stop the scheduler
 
 ## Acknowledgments
 
