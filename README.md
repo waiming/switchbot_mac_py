@@ -38,6 +38,19 @@ This will scan for nearby SwitchBot devices and display:
 
 **Note:** `config/config.py` is gitignored to protect your credentials.
 
+## Usage
+
+Once configured, you can control your SwitchBot device. For example, to press the button three times:
+
+```bash
+python src/pressing3times.py
+```
+
+This script will:
+1. Scan and connect to your configured SwitchBot device
+2. Display device information (model, battery, signal strength)
+3. Press the button three times with 5-second intervals between each press
+
 ## Acknowledgments
 
 This project uses [pySwitchbot](https://github.com/Danielhiversen/pySwitchbot), a Python library for controlling SwitchBot devices via Bluetooth.
