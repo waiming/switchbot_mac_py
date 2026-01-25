@@ -55,7 +55,7 @@ This script will:
 
 This project uses [pySwitchbot](https://github.com/Danielhiversen/pySwitchbot), a Python library for controlling SwitchBot devices via Bluetooth.
 
-SwitchBot is a trademark of Wonderlabs, Inc. This project is not affiliated with or endorsed by SwitchBot.
+[SwitchBot](https://www.switch-bot.com) is a trademark of SwitchBot Global. This project is not affiliated with or endorsed by SwitchBot.
 
 ## License
 
