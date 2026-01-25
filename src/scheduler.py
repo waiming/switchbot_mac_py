@@ -8,6 +8,7 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 
 def run_pressing_script():
     print(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] Running pressing3times.py...")
+    print("-" * 60)
     try:
         result = subprocess.run(
             ["python", "pressing3times.py"],
@@ -15,13 +16,19 @@ def run_pressing_script():
             capture_output=True,
             text=True
         )
+        # Print the output from the script
+        if result.stdout:
+            print(result.stdout)
+        if result.stderr:
+            print(result.stderr)
+        
+        print("-" * 60)
         if result.returncode == 0:
             print(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] Success!")
         else:
             print(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] Failed with exit code {result.returncode}")
-            if result.stderr:
-                print(f"Error: {result.stderr}")
     except Exception as e:
+        print("-" * 60)
         print(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] Exception: {e}")
 
 # Schedule the task to run every 1 hour and 5 minutes
