@@ -31,9 +31,8 @@ def run_pressing_script():
         print("-" * 60)
         print(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] Exception: {e}")
 
-# Schedule the task to run every 1 hour and 5 minutes
+# Schedule the task to run every 1 hour 
 schedule.every(1).hours.do(run_pressing_script)
-schedule.every().hour.at(":05").do(run_pressing_script)
 
 print(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] Scheduler started. Will run pressing3times.py every 1 hour and 5 minutes.")
 print("Press Ctrl+C to stop.")
