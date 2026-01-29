@@ -92,25 +92,60 @@ class SwitchbotController:
             # Reset disconnect timer
             self._reset_disconnect_timer()
     
-    async def discover_device(self, scan_timeout=15):
-        """Discover the device using BleakScanner and establish connection."""
-        print(f"  Scanning for {scan_timeout} seconds...")
-        
-        devices = await BleakScanner.discover(timeout=scan_timeout, return_adv=True)
-        
-        for address, (device, adv_data) in devices.items():
-            if address.upper() == self.mac_address.upper():
-                print(f"  ✓ Device found!")
-                print(f"    Name: {device.name or 'Unknown'}")
-                print(f"    RSSI: {adv_data.rssi} dBm")
-                self._device = device
-                
-                # Establish connection immediately after discovery
-                print(f"  🔗 Establishing connection...")
+    async def discover_and_connect(self, scan_timeout=15, max_retries=3):
+        """Discover device and establish connection with retries."""
+        for attempt in range(max_retries):
+            if attempt > 0:
+                print(f"\n🔄 Retry attempt {attempt + 1}/{max_retries}...")
+                print(f"  💡 Press the Switchbot button NOW and keep it close!")
+                await asyncio.sleep(2)
+            
+            print(f"  Scanning for {scan_timeout} seconds...")
+            
+            # Use detection callback for immediate connection
+            found_device = None
+            
+            def detection_callback(device, adv_data):
+                nonlocal found_device
+                if device.address.upper() == self.mac_address.upper():
+                    if not found_device:  # Only report once
+                        print(f"  ✓ Device found!")
+                        print(f"    Name: {device.name or 'Unknown'}")
+                        print(f"    RSSI: {adv_data.rssi} dBm")
+                    found_device = (device, adv_data)
+            
+            scanner = BleakScanner(detection_callback=detection_callback)
+            await scanner.start()
+            
+            # Wait up to scan_timeout for device to appear
+            start_time = asyncio.get_event_loop().time()
+            while not found_device and (asyncio.get_event_loop().time() - start_time) < scan_timeout:
+                await asyncio.sleep(0.5)
+            
+            await scanner.stop()
+            
+            if not found_device:
+                if attempt < max_retries - 1:
+                    print(f"  ⚠ Device not found, retrying...")
+                    continue
+                return False
+            
+            device, adv_data = found_device
+            self._device = device
+            
+            # Connect immediately while device is still active
+            print(f"  🔗 Connecting (RSSI: {adv_data.rssi} dBm)...")
+            try:
                 await self._ensure_connected()
                 print(f"  ✓ Connection established!")
-                
                 return True
+            except Exception as e:
+                error_msg = str(e).split(':')[0] if ':' in str(e) else str(e)
+                print(f"  ⚠ Connection failed: {error_msg}")
+                if attempt < max_retries - 1:
+                    print(f"  💡 Retrying... Move device closer if possible")
+                    # Keep scanner stopped briefly before retry
+                    await asyncio.sleep(1)
         
         return False
     
@@ -180,12 +215,13 @@ async def main():
     
     # Discover device
     print("🔍 Discovering device...")
-    if not await controller.discover_device(scan_timeout=15):
-        print("\n❌ Device not found during scan")
+    if not await controller.discover_and_connect(scan_timeout=10, max_retries=3):
+        print("\n❌ Unable to connect to device")
         print("\nTroubleshooting:")
-        print("   1. Press the button on the Switchbot to wake it")
-        print("   2. Move device closer (within 1 meter)")
-        print("   3. Verify MAC address in config.py")
+        print("   1. Move Switchbot within 0.5 meter of Raspberry Pi")
+        print("   2. Press and HOLD the button for 2-3 seconds")
+        print("   3. Remove obstacles (walls, metal) between devices")
+        print("   4. Verify MAC address in config.py")
         return
     
     print()
