@@ -247,8 +247,8 @@ async def main():
                 print(f"  ❌ Press #{i+1} failed: {error_msg}")
             
             if i < 2:
-                print(f"  ⏳ Waiting 5 seconds (connection stays alive)...")
-                await asyncio.sleep(5)
+                print(f"  ⏳ Waiting 8 seconds (connection stays alive)...")
+                await asyncio.sleep(8)
         
     finally:
         # Clean up connection
